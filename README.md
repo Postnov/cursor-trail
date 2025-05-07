@@ -4,7 +4,9 @@
 
 ## Демо
 
-Чтобы увидеть эффект в действии, откройте файл `index.html` в вашем браузере.
+<video width="100%" height="500" controls>
+  <source src="./demo.mp4" type="video/mp4">
+</video>
 
 ## Особенности
 
