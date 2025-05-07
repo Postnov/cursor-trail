@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Настройки эффекта следа
     const trailSettings = {
-        color: 'rgba(255, 255, 255, 0.5)', // Цвет следа
+        color: 'rgba(255, 255, 255, 0.85)', // Цвет следа (более яркий белый)
         thickness: 1,                      // Толщина линии
         maxSegments: 40,                   // Максимальное количество сегментов
         minDistance: 3,                    // Минимальное расстояние между точками
-        fadeFactor: 0.95                   // Фактор затухания (чем ближе к 1, тем медленнее затухание)
+        fadeFactor: 0.95,                   // Фактор затухания (чем ближе к 1, тем медленнее затухание)
+        inactivityTimeout: 5000            // Время бездействия (мс) до начала исчезновения следа
     };
     
     // Массив для хранения сегментов следа
@@ -16,8 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastY = null;
     let isFirstMove = true;
     
+    // Таймер для отслеживания бездействия
+    let inactivityTimer = null;
+    
+    // Функция для запуска исчезновения следа при бездействии
+    function startFadeOutSequence() {
+        // Плавно убираем все сегменты
+        if (segments.length > 0) {
+            segments.forEach((segment, index) => {
+                setTimeout(() => {
+                    segment.style.opacity = '0';
+                }, index * 50); // Плавное исчезновение с небольшой задержкой для каждого сегмента
+            });
+            
+            // Очищаем массив сегментов после завершения анимации последнего сегмента
+            setTimeout(() => {
+                segments.forEach(segment => segment.remove());
+                segments.length = 0;
+            }, segments.length * 50 + 300);
+        }
+    }
+    
+    // Функция сброса таймера бездействия
+    function resetInactivityTimer() {
+        if (inactivityTimer) {
+            clearTimeout(inactivityTimer);
+        }
+        inactivityTimer = setTimeout(startFadeOutSequence, trailSettings.inactivityTimeout);
+    }
+    
     // Обновляем позицию линии при движении мыши
     document.addEventListener('mousemove', (e) => {
+        // Сбрасываем таймер бездействия при каждом движении мыши
+        resetInactivityTimer();
+        
         // При первом движении только запоминаем позицию
         if (isFirstMove) {
             lastX = e.clientX;
@@ -97,4 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seg.style.opacity = opacity;
         });
     }
+    
+    // Инициализируем таймер бездействия
+    resetInactivityTimer();
 }); 

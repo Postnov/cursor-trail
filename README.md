@@ -1,6 +1,6 @@
-# Плавный след за курсором на Canvas
+# Плавный след за курсором
 
-Этот проект реализует эффект плавной линии, следующей за курсором мыши, с использованием HTML Canvas. Линия отрисовывается в реальном времени, создавая элегантный и современный визуальный эффект.
+Этот проект реализует эффект плавной линии, следующей за курсором мыши. Линия отрисовывается в реальном времени с помощью JavaScript, создавая элегантный и современный визуальный эффект.
 
 ## Демо
 
@@ -8,11 +8,12 @@
 
 ## Особенности
 
--   **Плавная анимация**: Использование Canvas API и `requestAnimationFrame` обеспечивает гладкое и производительное отображение.
--   **Настраиваемый хвост**: Длина и затухание "хвоста" линии могут быть настроены.
--   **Постоянный след**: Возможность оставлять постоянный след там, где проходил курсор, который исчезает только при продолжении движения.
--   **Адаптивность**: Учитывает `devicePixelRatio` для четкого отображения на Retina-дисплеях и экранах с высоким DPI.
--   **Простая интеграция**: Легко добавляется на любую веб-страницу.
+- **Плавная анимация**: Гладкое и производительное отображение следа за курсором.
+- **Настраиваемый след**: Длина и затухание линии могут быть настроены.
+- **Постоянный след**: Линия остается видимой там, где прошел курсор.
+- **Автоматическое затухание**: След автоматически плавно исчезает после 5 секунд бездействия.
+- **Простая интеграция**: Легко добавляется на любую веб-страницу.
+- **Минифицированная версия**: Компактный код с сохранением читаемости настроек.
 
 ## Использование
 
@@ -20,76 +21,80 @@
 
 ### Способ 1: Подключение отдельного файла
 
-1.  **Скопируйте файл**: Скопируйте файл `cursor-trail.js` в ваш проект.
-2.  **Добавьте на страницу**: Добавьте скрипт в ваш HTML-файл перед закрывающим тегом `</body>`:
+1. **Скопируйте файл**: Скопируйте файл `cursor-trail.js` в ваш проект.
+2. **Добавьте на страницу**: Добавьте скрипт в ваш HTML-файл перед закрывающим тегом `</body>`:
 
-    ```html
-    <script src="путь/к/cursor-trail.js"></script>
-    ```
+```html
+<script src="путь/к/cursor-trail.js"></script>
+```
 
-3.  **Готово!** Эффект будет автоматически активирован при загрузке страницы.
+3. **Готово!** Эффект будет автоматически активирован при загрузке страницы.
 
-### Способ 2: Встраивание скрипта напрямую
+### Способ 2: Встраивание минифицированного кода
 
-Вы также можете просто вставить код прямо в HTML без необходимости отдельного файла:
+Вы также можете встроить код прямо в HTML с сохранением читаемости настроек:
 
 ```html
 <script>
-document.addEventListener("DOMContentLoaded", () => { let t = { 
-    color: "red", // цвет линии
-    thickness: 1, // толщина линии
-    maxSegments: 40, // максимальное количество сегментов
-    minDistance: 3, // минимальное расстояние между точками
-    fadeFactor: .95 // фактор затухания (чем ближе к 1, тем медленнее затухание)
-}, e = [], n = null, l = null, i = !0; function s(n, l, i, s) { let a = document.createElement("div"); if (a.classList.add("trail-segment"), a.style.width = `${Math.sqrt(Math.pow(i - n, 2) + Math.pow(s - l, 2))}px`, a.style.height = `${t.thickness}px`, a.style.left = `${n}px`, a.style.top = `${l}px`, a.style.transform = `rotate(${180 * Math.atan2(s - l, i - n) / Math.PI}deg)`, a.style.transformOrigin = "0 0", a.style.backgroundColor = t.color, a.style.position = "fixed", a.style.pointerEvents = "none", a.style.zIndex = "9998", a.style.borderRadius = "0px", a.style.opacity = "1", a.style.transition = "opacity 0.3s", document.body.appendChild(a), e.push(a), e.length > t.maxSegments) { let r = e.shift(); r.style.opacity = "0", setTimeout(() => { r.remove() }, 300) } o() } function o() { e.forEach((t, n) => { let l = (n + 1) / e.length; t.style.opacity = l }) } document.addEventListener("mousemove", e => { if (i) { n = e.clientX, l = e.clientY, i = !1; return } if (null === n || null === l) { n = e.clientX, l = e.clientY; return } let o = e.clientX - n, a = e.clientY - l, r = Math.sqrt(o * o + a * a); r > t.minDistance && (s(n, l, e.clientX, e.clientY), n = e.clientX, l = e.clientY) }) });
+document.addEventListener("DOMContentLoaded",()=>{
+    // Настройки эффекта - удобно редактировать
+    const trailSettings = {
+        color: "rgba(255, 255, 255, 0.85)",  // Цвет линии
+        thickness: 1,                        // Толщина линии
+        maxSegments: 40,                     // Максимальное количество сегментов
+        minDistance: 3,                      // Минимальное расстояние между точками
+        fadeFactor: .95,                     // Фактор затухания
+        inactivityTimeout: 5000              // Время бездействия до исчезновения (мс)
+    };
+    
+    // Минифицированный код (не редактировать)
+    let s=[],x=null,y=null,f=!0,t=null;function h(){s.length>0&&(s.forEach((e,i)=>{setTimeout(()=>{e.style.opacity="0"},50*i)}),setTimeout(()=>{s.forEach(e=>e.remove()),s.length=0},50*s.length+300))}function r(){t&&clearTimeout(t),t=setTimeout(h,trailSettings.inactivityTimeout)}function c(e,i,n,o){const a=document.createElement("div");a.classList.add("trail-segment");const l=Math.sqrt(Math.pow(n-e,2)+Math.pow(o-i,2)),d=180*Math.atan2(o-i,n-e)/Math.PI;if(a.style.width=`${l}px`,a.style.height=`${trailSettings.thickness}px`,a.style.left=`${e}px`,a.style.top=`${i}px`,a.style.transform=`rotate(${d}deg)`,a.style.transformOrigin="0 0",a.style.backgroundColor=trailSettings.color,a.style.position="fixed",a.style.pointerEvents="none",a.style.zIndex="9998",a.style.borderRadius="0px",a.style.opacity="1",a.style.transition="opacity 0.3s",document.body.appendChild(a),s.push(a),s.length>trailSettings.maxSegments){const e=s.shift();e.style.opacity="0",setTimeout(()=>{e.remove()},300)}s.forEach((e,t)=>{e.style.opacity=(t+1)/s.length})}document.addEventListener("mousemove",e=>{if(r(),f)return x=e.clientX,y=e.clientY,void(f=!1);if(null===x||null===y)return x=e.clientX,void(y=e.clientY);const t=e.clientX-x,i=e.clientY-y,n=Math.sqrt(t*t+i*i);n>trailSettings.minDistance&&(c(x,y,e.clientX,e.clientY),x=e.clientX,y=e.clientY)}),r()});
 </script>
 ```
 
-Этот минифицированный код можно просто скопировать и вставить в ваш HTML, и эффект сразу начнет работать!
+Этот подход позволяет легко настраивать эффект без необходимости вникать в весь код.
 
 ## Настройка
 
-Параметры эффекта можно настроить через объект настроек в начале кода:
+Настройка эффекта производится через объект `trailSettings`:
 
 ```javascript
-// В отдельном файле cursor-trail.js
-document.addEventListener('DOMContentLoaded', () => {
-    // Настройки эффекта следа
-    const trailSettings = {
-        color: 'rgba(255, 255, 255, 0.85)', // Цвет линии (RGBA)
-        thickness: 0.8,                     // Толщина линии в пикселях
-        maxPoints: 300,                     // Максимальное количество точек в линии
-        minDistance: 1,                     // Минимальное расстояние между точками
-        trailPixelLength: 60,               // Длина "хвоста" в пикселях, который активно затухает
-        minOpacity: 0.3                     // Минимальная непрозрачность постоянной части
-    };
-    // ... остальной код
-});
-
-// Или в случае встроенного кода:
-let t = { 
-    color: "red",          // цвет линии
-    thickness: 1,          // толщина линии 
-    maxSegments: 40,       // максимальное количество сегментов
-    minDistance: 3,        // минимальное расстояние между точками
-    fadeFactor: .95        // фактор затухания (чем ближе к 1, тем медленнее затухание)
+const trailSettings = {
+    color: "rgba(255, 255, 255, 0.85)",  // Цвет линии
+    thickness: 1,                        // Толщина линии
+    maxSegments: 40,                     // Максимальное количество сегментов
+    minDistance: 3,                      // Минимальное расстояние между точками
+    fadeFactor: .95,                     // Фактор затухания
+    inactivityTimeout: 5000              // Время бездействия до исчезновения (мс)
 };
 ```
 
 ### Описание параметров:
 
--   `color`: Цвет линии (CSS-цвет, включая HEX, RGB, RGBA).
--   `thickness`: Толщина линии в пикселях.
--   `maxPoints`/`maxSegments`: Максимальное количество точек/сегментов в линии (влияет на длину следа).
--   `minDistance`: Минимальное расстояние между точками для добавления нового сегмента.
--   `trailPixelLength`: Длина активного "хвоста" в пикселях (для canvas версии).
--   `minOpacity`/`fadeFactor`: Параметры, влияющие на скорость затухания линии.
+- `color`: Цвет линии в любом CSS-формате (HEX, RGB, RGBA).
+- `thickness`: Толщина линии в пикселях.
+- `maxSegments`: Максимальное количество сегментов в линии (влияет на длину следа).
+- `minDistance`: Минимальное расстояние в пикселях для создания нового сегмента.
+- `fadeFactor`: Фактор затухания для плавного исчезновения (чем ближе к 1, тем медленнее затухание).
+- `inactivityTimeout`: Время в миллисекундах, после которого след начнет исчезать при отсутствии движения курсора.
 
-## Структура проекта
+### Примеры настройки:
 
--   `cursor-trail.js`: Основной JavaScript-файл с логикой эффекта.
--   `index.html`: Пример HTML-страницы для демонстрации (опционально).
+- **Тонкая короткая линия**: `thickness: 0.5, maxSegments: 20`
+- **Длинный след**: `maxSegments: 120`
+- **Яркая заметная линия**: `color: "#ff0066", thickness: 2`
+- **Быстрое затухание**: `inactivityTimeout: 2000` (2 секунды)
+- **Высокая производительность**: `minDistance: 5, maxSegments: 30`
+
+## Как это работает
+
+Эффект следа создается с помощью JavaScript путем:
+1. Отслеживания движения курсора мыши
+2. Создания HTML-элементов, представляющих сегменты следа
+3. Анимации их прозрачности для обеспечения плавного эффекта
+4. Удаления старых сегментов для поддержания производительности
+5. Обнаружения бездействия для автоматического исчезновения
 
 ## Совместимость
 
-Работает во всех современных браузерах. Версия с Canvas требует поддержки HTML Canvas и ES6 JavaScript, версия с div-элементами работает практически везде. 
+Работает во всех современных браузерах. 
