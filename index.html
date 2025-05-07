@@ -12,14 +12,5 @@
         <p>Перемещайте курсор по экрану, чтобы увидеть эффект следа</p>
     </div>
     <script src="cursor-trail.js"></script>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => { let t = { 
-        color: "red", // цвет линии
-        thickness: 1, // толщина линии
-        maxSegments: 40, // максимальное количество сегментов
-        minDistance: 3, // минимальное расстояние между точками
-        fadeFactor: .95 // фактор затухания (чем ближе к 1, тем медленнее затухание)
-    }, e = [], n = null, l = null, i = !0; function s(n, l, i, s) { let a = document.createElement("div"); if (a.classList.add("trail-segment"), a.style.width = `${Math.sqrt(Math.pow(i - n, 2) + Math.pow(s - l, 2))}px`, a.style.height = `${t.thickness}px`, a.style.left = `${n}px`, a.style.top = `${l}px`, a.style.transform = `rotate(${180 * Math.atan2(s - l, i - n) / Math.PI}deg)`, a.style.transformOrigin = "0 0", a.style.backgroundColor = t.color, a.style.position = "fixed", a.style.pointerEvents = "none", a.style.zIndex = "9998", a.style.borderRadius = "0px", a.style.opacity = "1", a.style.transition = "opacity 0.3s", document.body.appendChild(a), e.push(a), e.length > t.maxSegments) { let r = e.shift(); r.style.opacity = "0", setTimeout(() => { r.remove() }, 300) } o() } function o() { e.forEach((t, n) => { let l = (n + 1) / e.length; t.style.opacity = l }) } document.addEventListener("mousemove", e => { if (i) { n = e.clientX, l = e.clientY, i = !1; return } if (null === n || null === l) { n = e.clientX, l = e.clientY; return } let o = e.clientX - n, a = e.clientY - l, r = Math.sqrt(o * o + a * a); r > t.minDistance && (s(n, l, e.clientX, e.clientY), n = e.clientX, l = e.clientY) }) });
-    </script>
 </body>
 </html> 
